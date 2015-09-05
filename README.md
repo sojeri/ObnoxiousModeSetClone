@@ -65,6 +65,8 @@ User Stories -- Stretch Goals
 
 -->
 
+__IMPORTANT NOTE__ If this repository is still called SubprimeMortgageCrisis, I'm still away from the computer.
+
 What is the goal of this project?
 - to refactor & add more features to the set clone I started pre-Ada
   ([original version here][set], [source][setrepo])
