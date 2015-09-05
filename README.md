@@ -88,6 +88,7 @@ What are your personal learning goals?
 
 What is the minimum viable project that you could ship that accomplishes the
 goal of your project?
+
 1. the implementation of at least one full new feature (eg, memory or obnoxious mode)
 2. or a complete refactor that reduces complexity of code & breaks it down into more object-oriented principles -- compartmentalized & broken into simple, reusable parts.
 3. but to be honest, I hope to both implement a full new feature & refactor the original code.
