@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/set.scss" />
+    <script type="text/javascript" src="javascripts/jquery.js"></script>
+    <script type="text/javascript" src="javascripts/card.js"></script>
+    <script type="text/javascript" src="javascripts/deck.js"></script>
+    <script type="text/javascript" src="javascripts/board.js"></script>
+    <script type="text/javascript" src="javascripts/setup.js"></script>
+    <title>Set Clone-- now including ObnoxiousMode!</title>
+  </head>
+  <body>
+    <div id="buttons-layer" class="panel">
+      <div id="game-glyph" class="glyph">&lt;-</div>
+      <div id="options-glyph" class="glyph">%</div>
+      <div id="info-glyph" class="glyph">i</div>
+    </div>
+
+    <div id="board" class="panel">
+    </div>
+
+    <div id="options" class="panel">
+      <h1>Options</h1>
+      <!-- color options -->
+      <section id="colors">
+        <h3>customize your colors</h3>
+        <ul>
+          <li>insert</li>
+          <li>some</li>
+          <li>sweet</li>
+          <li>color</li>
+          <li>options</li>
+          <li>here</li>
+        </ul>
+      </section>
+      <!-- mode options -->
+      <section id="modes">
+        <h3>choose a different game mode</h3>
+        <ul>
+          <li>Classic Game (Easy Difficulty)</li>
+          <li>Classic Game (Normal Difficulty)</li>
+          <li>Classic Game (Insane Difficulty)</li>
+          <li>Memory Game (Easy Difficulty)</li>
+          <li>Memory Game (Normal Difficulty)</li>
+          <li>Memory Game (Insane Difficulty)</li>
+          <li>Activate Obnoxious Mode</li>
+      </section>
+    </div>
+
+    <div id="info" class="panel">
+      <h1>&middot;&middot;&middot;&middot;About&middot;&middot;&middot;&middot;</h1>
+      <section id="info-gameplay">
+        <h3>playing the game</h3>
+        <!-- explain how to play the game -->
+        Set is a game about finding patterns. Your goal is to find sets of three
+        cards. Each card has four attributes-- color, shade, fill, and number.
+        A set is a group of cards which across each of those four attributes is
+        either all the same (eg, all red, all diamond, all solid) or all different
+        (eg, one red, one green, & one purple).
+      </section>
+      <section id="info-project">
+        <h3>about this project</h3>
+        <!-- explain the purpose of the project -->
+        This is mostly a learning project for me-- something I can use to apply
+        new skills. If you find any bugs that aren't listed in the <a
+        href="http://github.com/drvonnjerryxlii/subprimemortgagecrisis">issues
+        here</a>, please add it or <a href="http://twitter.com/drvonnjerryxlii">drop
+        me a line</a> so I can take care of it!
+      </section>
+    </div>
+  </body>
+</html>
