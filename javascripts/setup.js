@@ -6,7 +6,7 @@ $(document).ready(function() {
 
   $(".colors").click(function(event) {
     var id = $(this).attr("id");
-    game[id].setColorScheme();
+    game.drawingMachine[id].setColorScheme();
     game.display();
     options.hide();
     board.show();
@@ -97,16 +97,14 @@ function createCard(row, col) {
   // make a card slot
   var canvasDiv = $("<div></div>");
   canvasDiv.addClass("card");
-
-  var canvas = $("<canvas></canvas>");
-  canvas.attr("height", 150);
-  canvas.attr("width", 100);
+    var canvas = $("<canvas></canvas>");
+    canvas.attr("height", 150);
+    canvas.attr("width", 100);
   canvasDiv.append(canvas);
 
   // give it a unique position marker
   canvasDiv.attr("card-row", "r" + row);
   canvasDiv.attr("card-col", "c" + col);
-
 
   return canvasDiv;
 }

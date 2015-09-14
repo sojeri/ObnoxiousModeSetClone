@@ -27,7 +27,3 @@ SetRules.isSet = function(threeCardArray) {
 
   return true;
 }
-
-SetRules.hint = function(cardsArray) {
-  // hint function here
-}

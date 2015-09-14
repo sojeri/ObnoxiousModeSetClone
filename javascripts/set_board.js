@@ -3,10 +3,10 @@
 function SetBoard() { // SetBoard constructor
   // has a deck of cards
   this.deck = new SetDeck();
-  this.cardRefs = this.deck.draw(12);
+  this.table = this.deck.draw(12);
 
   // has a drawing machine
-  this.drawingMachine = new SetDraw(); // SetDraw(this) broke everything
+  this.drawingMachine = new SetDraw();
 
   // and a hint machine
   this.hint = new SetHint();
@@ -15,51 +15,101 @@ function SetBoard() { // SetBoard constructor
   this.playerScore = 0;
 }
 
-SetBoard.prototype.hint = function() {
-  // hint function here
+SetBoard.prototype.createEmptyCard = function(row, col) {
+  // make a card slot
+  var canvasDiv = $("<div></div>");
+  canvasDiv.addClass("card");
+
+  var canvas = $("<canvas></canvas>");
+  canvas.attr("height", 150);
+  canvas.attr("width", 100);
+  canvasDiv.append(canvas);
+
+  // give it a unique position marker
+  canvasDiv.attr("card-row", "r" + row);
+  canvasDiv.attr("card-col", "c" + col);
+
+  return canvasDiv;
 }
 
 SetBoard.prototype.clickCard = function(id) {
-  // var cardRef = this.cardRefs[Number(id)];
-  // var card = this.deck.cards[cardRef];
+  // change the class's selection type when clicked
   var cardDiv = $("#" + id);
   cardDiv.toggleClass("selected");
-
-
-  // var cardAttrs = [card.color, card.shape, card.fill, card.number];
-  // console.log("check out de card: " + cardAttrs.join(" "));
 }
 
 SetBoard.prototype.set = function() {
   var possible = $(".selected");
-  if (possible.length !== Set.size) {
-    console.log(false);
+  if (possible.length !== SetRules.size) {
+    console.log("wrong no. cards");
   } else {
-    var possibleSet = [possible[0], possible[1], possible[2]];
-    console.log(Set.isSet(possibleSet));
+    that = this;
+
+    function grabCards(tablePosition) {
+      var cardRef = that.table[tablePosition]; // grab the deck's cardRef from the board
+      var card = that.deck.cards[cardRef]; // grab the card from the deck
+      return card;
+    }
+
+    function grabTablePositions(div) {
+      // grab the board's cardRef from the div element
+      var tablePosition = div.id;
+      tablePosition = tablePosition.replace("#", "");
+      tablePosition = Number(tablePosition);
+      return tablePosition;
+    }
+
+    var possibleSetDivs = [possible[0], possible[1], possible[2]];
+    var tablePositions = possibleSetDivs.map(grabTablePositions);
+    var possibleSet = tablePositions.map(grabCards);
+
+    if (SetRules.isSet(possibleSet)) {
+      // this is a super cool pattern StackOverflow suggested for mimicking
+      // sleep / pause functionality. this is necessary, because removeSet
+      // triggers some animations that last 0.08 seconds. but code continues
+      // executing here despite that. so before this pattern was implemented,
+      // the display() function would try to display cards that weren't yet
+      // added to the DOM in drawNewCards().
+      function animateChanges() {
+        that.drawingMachine.removeSet(possibleSet);
+        that.drawNewCards(tablePositions);
+
+        // wait for spin animations to complete before continuing
+        setTimeout(continueExecution, 80);
+      }
+
+      // finish doing things after the pause
+      function continueExecution() {
+        that.display();
+      }
+
+      animateChanges();
+
+    } else {
+      console.log("not a set");
+    }
   }
+}
+
+SetBoard.prototype.drawNewCards = function(oldSetLocations) {
+  if (this.deck.cardRefs.length > 0) {
+    var newCards = this.deck.draw(oldSetLocations.length);
+    var that = this;
+
+    oldSetLocations.forEach(function(location, index) {
+      that.table.splice(location, 1, newCards[index]); // draw a new card
+    });
+
+    console.log("now w/ new cards: " + this.table);
+  };
 }
 
 SetBoard.prototype.display = function() {
   var deck = this.deck;
   var that = this;
-  this.cardRefs.forEach(function(cardRef, index) {
+  this.table.forEach(function(cardRef, index) {
     var card = deck.cards[cardRef];
     card.parentId = card.parentId || index;
     that.drawingMachine.display(card);
   });
 }
-
-/*
-what does board need to do?
-- keep track of cards
-- keep track of hint status
-- keep track of color options
-
-what does deck need to do?
-- be a collection of cards
-
-what do cards need to do?
-- store the card info
-- draw themselves
-*/

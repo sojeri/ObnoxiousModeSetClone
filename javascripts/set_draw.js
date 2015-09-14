@@ -101,6 +101,7 @@ SetDraw.prototype.startDrawing = function() {
   var parent = $("#" + this.currentCard.parentId); // grab the card's parent off the page
   var canvas = parent.children("canvas"); // grab the canvas element within
   this.currentCard.context = canvas.get(0).getContext('2d'); // prepare it for 2d drawing instructions
+  this.currentCard.context.clearRect(0, 0, 100, 150);
 }
 
 // this sets both the fill & color for the drawing
@@ -112,7 +113,7 @@ SetDraw.prototype.setShapeBackground = function() {
   if (this.currentCard.fill === "fill1") { // fill1 is currently solid
     this.currentCard.context.fillStyle = SetColors[this.currentCard.color];
   } else { // fill2 & fill3 are dashed & outlined, which both currently use stroke
-    this.currentCard.context.strokeStyle = this[this.currentCard.color];
+    this.currentCard.context.strokeStyle = SetColors[this.currentCard.color];
     if (this.currentCard.fill === "fill2") { // fill2 is currently dashed / striped
       this.stripes(); // draw the stripes
     }
@@ -122,7 +123,6 @@ SetDraw.prototype.setShapeBackground = function() {
 SetDraw.prototype.drawShape = function() {
   var thisShape = this.currentCard.shape; // eg, shape1
   var shapeName = this[thisShape]; // eg, diamonds
-
   return this[shapeName](); // return and execute the function, eg this.diamonds();
 }
 
@@ -137,10 +137,7 @@ SetDraw.prototype.rectangles = function() {
     this.drawRectangle(this.x, this.y - 50, this.width, this.height);
     this.drawRectangle(this.x, this.y, this.width, this.height);
     this.drawRectangle(this.x, this.y + 50, this.width, this.height);
-  } else {
-    errorMessage("rectangles() if number");
   }
-  console.log("I should have drawn a rectangle yo");
 };
 
 SetDraw.prototype.drawRectangle = function(x, y, width, height) {
@@ -167,8 +164,6 @@ SetDraw.prototype.diamonds = function() {
     this.drawDiamond(this.x, this.y - 50, this.width, this.height);
     this.drawDiamond(this.x, this.y, this.width, this.height);
     this.drawDiamond(this.x, this.y + 50, this.width, this.height);
-  } else {
-    errorMessage("diamonds() if number");
   }
 };
 
@@ -204,8 +199,6 @@ SetDraw.prototype.semicircles = function() {
     this.drawSemicircle(this.x, this.y - 50, this.width, this.height);
     this.drawSemicircle(this.x, this.y, this.width, this.height);
     this.drawSemicircle(this.x, this.y + 50, this.width, this.height);
-  } else {
-    errorMessage("semicircles() if number");
   }
 }
 
@@ -268,4 +261,42 @@ SetDraw.prototype.stripes = function(card,context) {
   }
 
   context.stroke();
+}
+
+
+//---------------- Adding cards and removing sets from the table ---------------
+SetDraw.prototype.removeSet = function(threeCardArray) {
+  var that = this;
+  threeCardArray.forEach(function(card) {
+    var cardDiv = $("#" + card.parentId);
+    var cardRow = cardDiv.attr("card-row");
+    var cardCol = cardDiv.attr("card-col");
+    that.createEmptyCard(cardRow, cardCol, card.parentId);
+
+    cardDiv.addClass("set").on("animationend",
+      function() { $(this).remove(); }
+    );
+  });
+}
+
+// old: <div class="card" card-row="r2" card-col="c3" id="11"><canvas height="150" width="100"></canvas></div>
+// new: <div class="card" card-row="r0" card-col="c0" id="0"><canvas height="150" width="100"></canvas></div>
+SetDraw.prototype.createEmptyCard = function(row, col, location) {
+  console.log("here")
+  var board = $("#board")
+  // make a card slot
+  var canvasDiv = $("<div></div>");
+  canvasDiv.addClass("card");
+    var canvas = $("<canvas></canvas>");
+    canvas.attr("height", 150);
+    canvas.attr("width", 100);
+  canvasDiv.append(canvas);
+
+  // give it a unique identifier & position
+  canvasDiv.attr("card-row", row);
+  canvasDiv.attr("card-col", col);
+  canvasDiv.attr("id", location);
+
+  // throw it on the board
+  board.append(canvasDiv);
 }
