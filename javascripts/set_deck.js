@@ -1,7 +1,6 @@
 // deck code goes here!
-
-function Deck() { // Deck constructor
-  this.cards = Card.populateDeck();
+function SetDeck() { // SetDeck constructor
+  this.cards = SetCard.populateDeck();
   this.cardRefs = this.cards.map(function(card, cardIndex) {
     return cardIndex;
   });
@@ -10,15 +9,19 @@ function Deck() { // Deck constructor
 }
 
 // draws a passed in number of cardRefs to a passed in board
-Deck.prototype.draw = function(board, amount) {
+SetDeck.prototype.draw = function(amount) {
+  var cardsDrawn = [];
+
   for (var i = 0; i < amount; ++i) {
-    board.push(this.cardRefs.shift());
+    cardsDrawn.push(this.cardRefs.shift());
   }
+
+  return cardsDrawn;
 }
 
-Deck.prototype.shuffle = function() {
-  var temp = this.cardRefs.slice();
-  this.cardRefs = [];
+SetDeck.prototype.shuffle = function() {
+  var temp = this.cardRefs.slice(); // make a copy of the original cardRefs
+  this.cardRefs = []; // delete the originals
 
   while (temp.length > 0) {
     var randomIndex = Math.floor(Math.random() * temp.length);

@@ -2,19 +2,34 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/set.scss" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/set.css" />
     <script type="text/javascript" src="javascripts/jquery.js"></script>
-    <script type="text/javascript" src="javascripts/card.js"></script>
-    <script type="text/javascript" src="javascripts/deck.js"></script>
-    <script type="text/javascript" src="javascripts/board.js"></script>
+    <script type="text/javascript" src="javascripts/set_card.js"></script>
+    <script type="text/javascript" src="javascripts/set_rules.js"></script>
+    <script type="text/javascript" src="javascripts/set_deck.js"></script>
+    <script type="text/javascript" src="javascripts/set_colors.js"></script>
+    <script type="text/javascript" src="javascripts/set_draw.js"></script>
+    <script type="text/javascript" src="javascripts/set_hint.js"></script>
+    <script type="text/javascript" src="javascripts/set_board.js"></script>
     <script type="text/javascript" src="javascripts/setup.js"></script>
-    <title>Set Clone-- now including ObnoxiousMode!</title>
+    <title>Set Clone: Refactor Over Break Edition</title>
   </head>
   <body>
     <div id="buttons-layer" class="panel">
-      <div id="game-glyph" class="glyph">&lt;-</div>
-      <div id="options-glyph" class="glyph">%</div>
-      <div id="info-glyph" class="glyph">i</div>
+      <div id="game-glyph" class="glyph">
+        <img src="images/back-to-game-icon.png" title="Back To Game"
+          alt="a white semicircle shape outline in black -- the game panel icon" />
+
+      </div>
+      <div id="options-glyph" class="glyph">
+        <img src="images/settings-gear-from-pixabay-cc-no-attribution.png"
+          alt="two white cogs outlined in black -- the settings panel icon"
+          title="Settings" />
+      </div>
+      <div id="info-glyph" class="glyph">
+        <img src="images/info-icon.png" title="Info"
+          alt="a white i outlined in black -- the info panel icon" />
+      </div>
     </div>
 
     <div id="board" class="panel">
@@ -25,14 +40,33 @@
       <!-- color options -->
       <section id="colors">
         <h3>customize your colors</h3>
-        <ul>
-          <li>insert</li>
-          <li>some</li>
-          <li>sweet</li>
-          <li>color</li>
-          <li>options</li>
-          <li>here</li>
-        </ul>
+
+        <div id="colorSchemes">
+          <button id="default" class="colors">
+            Default<br />
+            <canvas height="25" width="95"></canvas>
+          </button>
+          <button id="classic" class="colors">
+            Classic<br />
+            <canvas height="25" width="95"></canvas>
+          </button>
+          <button id="cool" class="colors">
+            Cool<br />
+            <canvas height="25" width="95"></canvas>
+          </button>
+          <button id="warm" class="colors">
+            Warm<br />
+            <canvas height="25" width="95"></canvas>
+          </button>
+          <button id="highContrast" class="colors">
+            High Contrast<br />
+            <canvas height="25" width="95"></canvas>
+          </button>
+          <button id="monochrome" class="colors">
+            Monochrome<br />
+            <canvas height="25" width="95"></canvas>
+          </button>
+        </div>
       </section>
       <!-- mode options -->
       <section id="modes">
@@ -64,10 +98,13 @@
         <!-- explain the purpose of the project -->
         This is mostly a learning project for me-- something I can use to apply
         new skills. If you find any bugs that aren't listed in the <a
-        href="http://github.com/drvonnjerryxlii/subprimemortgagecrisis">issues
+        href="https://github.com/drvonnjerryxlii/ObnoxiousModeSetClone/issues">issues
         here</a>, please add it or <a href="http://twitter.com/drvonnjerryxlii">drop
         me a line</a> so I can take care of it!
       </section>
     </div>
+
+    <canvas id="nope" height="150" width="100"></canvas>
+
   </body>
 </html>
