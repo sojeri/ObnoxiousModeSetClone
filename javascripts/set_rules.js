@@ -1,5 +1,5 @@
 function SetRules() { // worthless SetRules constructor; here only for equivalent of class methods
-  this.hint;
+  this.foo;
 }
 
 SetRules.size = 3;
@@ -21,8 +21,9 @@ SetRules.isSet = function(threeCardArray) {
   }
 
   for (var i = 0; i < attributes.length; i++) {
-    if (threeEqual(attributes[i]) === false)
+    if (threeEqual(attributes[i]) === false) {
       return false;
+    }
   }
 
   return true;

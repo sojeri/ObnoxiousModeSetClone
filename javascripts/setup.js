@@ -1,9 +1,9 @@
 $(document).ready(function() {
-  // set up click handlers for color schemes
   var board = $("#board");
   var info = $("#info");
   var options = $("#options");
 
+  // set up click handlers for color schemes
   $(".colors").click(function(event) {
     var id = $(this).attr("id");
     game.drawingMachine[id].setColorScheme();
@@ -55,7 +55,11 @@ $(document).ready(function() {
   // set up click handlers for buttons
   $("#set").click(function() {
     game.set();
-  })
+  });
+
+  $("#hint").click(function() {
+    game.hint();
+  });
 
   // make a keydown event for users who prefer keyboard play
 
@@ -73,8 +77,9 @@ function setupBoard() {
   // add card spaces to the table
   createCardSpaces(cardsVertical, cardsHorizontal, defaultCardsDisplayed);
 
-  // add the set button
-  createSetButton();
+  // add the set & hint buttons
+  createGameButton("set");
+  createGameButton("hint");
 }
 
 function createCardSpaces(rows, columns, displayLimit) {
@@ -109,10 +114,9 @@ function createCard(row, col) {
   return canvasDiv;
 }
 
-function createSetButton() {
+function createGameButton(text) {
   var board = $("#board"); // grab the board
   var button = $("<button></button>");
-  button.attr("id", "set");
-  button.text("Set!");
+  button.attr("id", text.toLowerCase());
   board.append(button);
 }

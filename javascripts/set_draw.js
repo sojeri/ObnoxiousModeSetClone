@@ -63,15 +63,18 @@ SetDraw = function() { // SetDraw constructor
 SetDraw.prototype.display = function(possibleSetObject) {
   // faux duck typing but too lazy to check all the necessary attributes for now
   // FIXME: consider adding a SetCard validator to this.
-  if (possibleSetObject.constructor == SetCard) {
+  if (possibleSetObject.constructor === SetCard) {
     this.currentCard = possibleSetObject;
     this.card();
     this.currentCard = null;
     return true;
+  } else if (possibleSetObject.constructor === String) {
+    var message = $("#message");
+    message.text(possibleSetObject);
   } else {
-    console.log("an unrecognized object was fed into SetDraw object");s
+    console.log("an unrecognized object was fed into SetDraw object");
     return false;
-  }
+  };
 }
 
 SetDraw.prototype.allColorSchemes = function() {
@@ -91,6 +94,81 @@ SetDraw.prototype.color = function(colorsObject) {
   context.fillRect(65, 0, 25, 25);
 }
 
+//---------------- Removing sets from the table --------------------------------
+SetDraw.prototype.removeSet = function(threeCardArray) {
+  threeCardArray.forEach(function(card) {
+    var cardDiv = $("#" + card.parentId);
+    cardDiv.toggleClass("selected");
+
+    cardDiv.addClass("set").on("animationend",
+      function() { cardDiv.removeClass("set"); }
+    );
+  });
+}
+
+SetDraw.prototype.realignCards = function(boardObject, oldBoard) {
+  // first, define a couple helper functions for row & column positions on the cards
+  function row(tablePosition) {
+    var position = tablePosition + 1;
+
+    if (position % 3 === 0)
+      return "r2";
+    else if ((position + 1) % 3 === 0)
+      return "r1";
+    else
+      return "r0";
+  }
+
+  function column(tablePosition) {
+    var col = "c";
+
+    if (tablePosition < 6)
+      col += tablePosition;
+    else if (tablePosition < 12)
+      col += (tablePosition - 6);
+    else
+      col += (tablePosition - 12);
+
+    return col;
+  }
+
+  var newBoard = boardObject.table;
+  var hideLocation = newBoard.length;
+  oldBoard.forEach(function(deckPosition, index) {
+    if (deckPosition !== newBoard[index]) {
+      var cardDivOld = $("#" + index);
+      cardDivOld.addClass("set").on("animationend", function() {
+        cardDivOld.hide();
+        cardDivOld.removeClass("set");
+        cardDivOld.attr("card-row", row(hideLocation));
+        cardDivOld.attr("card-col", column(hideLocation));
+        cardDivOld.attr("id", "nope");
+        hideLocation++;
+      });
+    }
+  })
+
+
+
+  for (var i = 0; i < currentTableLength + SetRules.size; i++) {
+    var cardDiv = $("#" + i);
+    console.log(cardDiv);
+    cardDiv.removeClass("selected");
+    cardDiv.addClass("realign").on("animationend",
+      function() {
+        cardDiv.removeClass("realign");
+        if (i >= currentTableLength) {
+          console.log("should be hiding " + i + " now!")
+          cardDiv.hide();
+          cardDiv.removeClass("new");
+        };
+      }
+    );
+  }
+}
+
+//---------------- All beyond this point is for drawing cards ------------------
+
 SetDraw.prototype.card = function() {
   this.startDrawing();
   this.setShapeBackground(); // aka, set color & fill of shape
@@ -98,7 +176,16 @@ SetDraw.prototype.card = function() {
 }
 
 SetDraw.prototype.startDrawing = function() {
-  var parent = $("#" + this.currentCard.parentId); // grab the card's parent off the page
+  var id = this.currentCard.parentId;
+  var parent = $("#" + id); // grab the card's parent off the page
+
+  if (id > 11) {
+    parent.show();
+    parent.addClass("new").on("animationend", function () {
+      parent.removeClass("new");
+    });
+  }
+
   var canvas = parent.children("canvas"); // grab the canvas element within
   this.currentCard.context = canvas.get(0).getContext('2d'); // prepare it for 2d drawing instructions
   this.currentCard.context.clearRect(0, 0, 100, 150);
@@ -170,10 +257,6 @@ SetDraw.prototype.diamonds = function() {
 
 //--- diamond ---
 
-/** diamond() takes some location info, a card index, and a context and draws a
- *  diamond at the specified location and context. It unpacks the fill type from
- *  the card to verify what type of line to draw.
- */
 SetDraw.prototype.drawDiamond = function(x, y, width, height) {
   var context = this.currentCard.context;
 
@@ -211,7 +294,7 @@ SetDraw.prototype.drawSemicircle = function(x, y, width, height) {
   context.arc(height, y + 15, height - x, 0, Math.PI, false);
   context.moveTo(width + x, y + 15);
   context.arc(width - x, y + 15, height - x, 0, Math.PI, true);
-  context.lineTo(width + x,y + 15);
+  context.lineTo(width + x, y + 15);
 
   this.finishPath();
 }
@@ -261,42 +344,4 @@ SetDraw.prototype.stripes = function(card,context) {
   }
 
   context.stroke();
-}
-
-
-//---------------- Adding cards and removing sets from the table ---------------
-SetDraw.prototype.removeSet = function(threeCardArray) {
-  var that = this;
-  threeCardArray.forEach(function(card) {
-    var cardDiv = $("#" + card.parentId);
-    var cardRow = cardDiv.attr("card-row");
-    var cardCol = cardDiv.attr("card-col");
-    that.createEmptyCard(cardRow, cardCol, card.parentId);
-
-    cardDiv.addClass("set").on("animationend",
-      function() { $(this).remove(); }
-    );
-  });
-}
-
-// old: <div class="card" card-row="r2" card-col="c3" id="11"><canvas height="150" width="100"></canvas></div>
-// new: <div class="card" card-row="r0" card-col="c0" id="0"><canvas height="150" width="100"></canvas></div>
-SetDraw.prototype.createEmptyCard = function(row, col, location) {
-  console.log("here")
-  var board = $("#board")
-  // make a card slot
-  var canvasDiv = $("<div></div>");
-  canvasDiv.addClass("card");
-    var canvas = $("<canvas></canvas>");
-    canvas.attr("height", 150);
-    canvas.attr("width", 100);
-  canvasDiv.append(canvas);
-
-  // give it a unique identifier & position
-  canvasDiv.attr("card-row", row);
-  canvasDiv.attr("card-col", col);
-  canvasDiv.attr("id", location);
-
-  // throw it on the board
-  board.append(canvasDiv);
 }

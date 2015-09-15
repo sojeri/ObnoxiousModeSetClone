@@ -9,7 +9,7 @@ function SetBoard() { // SetBoard constructor
   this.drawingMachine = new SetDraw();
 
   // and a hint machine
-  this.hint = new SetHint();
+  this.hintMachine = new SetHint(this);
 
   // initialize score to zero
   this.playerScore = 0;
@@ -36,6 +36,20 @@ SetBoard.prototype.clickCard = function(id) {
   // change the class's selection type when clicked
   var cardDiv = $("#" + id);
   cardDiv.toggleClass("selected");
+}
+
+SetBoard.prototype.display = function() {
+  var deck = this.deck;
+  var that = this;
+  this.table.forEach(function(cardRef, index) {
+    var card = deck.cards[cardRef];
+    card.parentId = card.parentId || index;
+    that.drawingMachine.display(card);
+  });
+}
+
+SetBoard.prototype.hint = function() {
+  return this.hintMachine.hint();
 }
 
 SetBoard.prototype.set = function() {
@@ -71,11 +85,16 @@ SetBoard.prototype.set = function() {
       // the display() function would try to display cards that weren't yet
       // added to the DOM in drawNewCards().
       function animateChanges() {
+        that.hintMachine.reset();
         that.drawingMachine.removeSet(possibleSet);
-        that.drawNewCards(tablePositions);
+        if (that.table.length <= 12) {
+          that.drawNewCards(tablePositions);
+        } else {
+          that.removeSet(tablePositions);
+        }
 
-        // wait for spin animations to complete before continuing
-        setTimeout(continueExecution, 80);
+        // wait for animations to complete before continuing
+        setTimeout(continueExecution, 100);
       }
 
       // finish doing things after the pause
@@ -99,17 +118,25 @@ SetBoard.prototype.drawNewCards = function(oldSetLocations) {
     oldSetLocations.forEach(function(location, index) {
       that.table.splice(location, 1, newCards[index]); // draw a new card
     });
-
-    console.log("now w/ new cards: " + this.table);
+  } else {
+    this.drawingMachine.display("You win!");
   };
 }
 
-SetBoard.prototype.display = function() {
-  var deck = this.deck;
+SetBoard.prototype.removeSet = function(oldSetLocations) {
+  // remove the cardRefs
+  var sortedReversedLocations = oldSetLocations.sort().reverse();
   var that = this;
-  this.table.forEach(function(cardRef, index) {
-    var card = deck.cards[cardRef];
-    card.parentId = card.parentId || index;
-    that.drawingMachine.display(card);
+
+  sortedReversedLocations.forEach(function(location) {
+    that.table.splice(location, 1);
   });
+
+  // animate the changes
+  this.drawingMachine.realignCards(this.table.length);
+}
+
+SetBoard.prototype.selectCardFromDeck = function(deckPosition) {
+  var card = this.deck.cards[deckPosition];
+  return card;
 }
